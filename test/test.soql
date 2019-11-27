@@ -64,10 +64,30 @@ reassign.toUserId = toUser.id;
 ID batchprocessid = Database.executeBatch(reassign);
 //ID batchprocessid = database.executeBatch(reassign,200);
 
-~~~~~~~~~~~~~~~~~~~~~~~~Queue~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-QueueableExampleOne job = new QueueableExampleOne();						
-job.max = 3;						
-System.enqueueJob(job);	
+/*
+AsyncApexJob
+  Represents an individual Apex sharing recalculation job, a batch 
+  Apex job, a method with the future annotation, or a job that 
+  implements Queueable.
+
+CronTrigger
+  Contains schedule information for a scheduled job. CronTrigger is 
+  similar to a cron job on UNIX systems.
+*/
+~~~~~~~~~~~~~~~~~~~~~~~~~get batch job info~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+List<AsyncApexJob> asyJoblist = [SELECT Id, Status, NumberofErrors,MethodName,JobType,
+     JobItemsProcessed, TotalJobItems, CreatedBy.Email,CompletedDate
+      From AsyncApexJob Order By CompletedDate DESC]; //WHERE Id =:BC.getJobId()
+for(AsyncApexJob job : asyJoblist) {
+    System.debug('Status: '+ job.Status +' NumberofErrors: '+ job.NumberofErrors+' MethodName: '+ 
+    job.MethodName+' JobType: '+ job.JobType + ' JobItemsProcessed: '+ job.JobItemsProcessed + ' TotalJobItems: '
+    +job.TotalJobItems +' '+job.CompletedDate + ' '+job.CreatedBy.Email);
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~get list of batch jobs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT Id, Name, JobType FROM CronJobDetail
+
+SELECT Id, CronJobDetail.Id, CronJobDetail.Name, CronJobDetail.JobType FROM CronTrigger ORDER BY CreatedDate DESC
 
 
 ~~~~~~~~~~~~~~~~~~~~Platform Event~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,4 +109,9 @@ if (sr.isSuccess()) {
     }
 }
 
+
+~~~~~~~~~~~~~~~~~~~~~~~~Queue~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+QueueableExampleOne job = new QueueableExampleOne();						
+job.max = 3;						
+System.enqueueJob(job);	
 
