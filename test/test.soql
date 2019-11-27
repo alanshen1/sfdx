@@ -1,0 +1,39 @@
+select id,name from account where billingstate like '%NY'
+
+
+SELECT COUNT(Id) FROM Opportunity WHERE CreatedDate = LAST_MONTH
+
+SELECT id, name,StageName from Opportunity
+
+SELECT LeadSource, COUNT(Name)
+FROM Lead
+GROUP BY LeadSource
+HAVING COUNT(Name) > 3
+
+
+AggregateResult[] ar = [SELECT AVG(Amount) average FROM Opportunity];
+Decimal avgAmount = (Decimal)ar[0].get('average');
+System.debug(avgAmount);
+
+try {
+    // This causes an exception because 
+    //   the required Name field is not provided.
+    Account acct = new Account();
+    // Insert the account 
+    insert acct;
+} catch (DmlException e) {
+    System.debug('A DML exception has occurred: ' +
+                e.getMessage());
+}
+
+
+for(Integer cnt = 0; cnt <101; cnt++) {
+    Opportunity oppList = [SELECT id, name,StageName from Opportunity LIMIT 1];
+}
+
+
+
+Set<id> setId = new Set<id>();									
+setId.add('0017F000008QLzrQAG');
+setId.add('0017F0000032v84QAA');							
+AccountProcessor.countContacts(setId);									
