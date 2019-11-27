@@ -32,8 +32,61 @@ for(Integer cnt = 0; cnt <101; cnt++) {
 }
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT Id, Name, toLabel(Room__c), Description__c, format(Date_and_Time__c) dateTime,							
+      (SELECT Speaker__r.Id, Speaker__r.Name, Speaker__r.Description, Speaker__r.Email, Speaker__r.Picture_URL__c FROM Session_Speakers__r) 							
+FROM Session__c
 
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Set<id> setId = new Set<id>();									
 setId.add('0017F000008QLzrQAG');
 setId.add('0017F0000032v84QAA');							
-AccountProcessor.countContacts(setId);									
+AccountProcessor.countContacts(setId);
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~Batch~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+LeadProcessor ldPsr = new LeadProcessor();
+Id batchId = Database.executeBatch(ldPsr);
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~Batch~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//reassign all accounts owned by a specific user to a different user
+User fromUser = [SELECT id FROM User WHERE Name LIKE '%Samantha%' LIMIT 1];
+User toUser = [SELECT id FROM User WHERE Name LIKE '%Shen%' LIMIT 1];
+OwnerReassignmentBatch reassign = new OwnerReassignmentBatch();
+reassign.query = 'SELECT Id, Name, Ownerid FROM Account WHERE ownerid =' + '\'' + fromUser.id + '\'';
+reassign.email='admin@ai-sfdc.com';
+reassign.fromUserId = fromUser.id;
+reassign.toUserId = toUser.id;
+ID batchprocessid = Database.executeBatch(reassign);
+//ID batchprocessid = database.executeBatch(reassign,200);
+
+~~~~~~~~~~~~~~~~~~~~~~~~Queue~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+QueueableExampleOne job = new QueueableExampleOne();						
+job.max = 3;						
+System.enqueueJob(job);	
+
+
+~~~~~~~~~~~~~~~~~~~~Platform Event~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Create an instance of the event and store it in the newsEvent variable
+Order_Event__e newsEvent = new Order_Event__e(
+           Order_Number__c='29837834', 
+           Has_Shipped__c=true);
+// Call method to publish events
+Database.SaveResult sr = EventBus.publish(newsEvent);
+// Inspect publishing result 
+if (sr.isSuccess()) {
+    System.debug('Successfully published event.');
+} else {
+    for(Database.Error err : sr.getErrors()) {
+        System.debug('Error returned: ' +
+                     err.getStatusCode() +
+                     ' - ' +
+                     err.getMessage());
+    }
+}
+
+
