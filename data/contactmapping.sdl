@@ -1,0 +1,8 @@
+#Mapping values
+#Wed Nov 27 13:46:46 JST 2019
+Description=Description
+FirstName=FirstName
+Title=Title
+Birthdate=Birthdate
+LastName=LastName
+ReportsTo.Email=Email
