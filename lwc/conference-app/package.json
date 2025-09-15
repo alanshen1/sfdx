@@ -5,7 +5,7 @@
     "author": "alphahunters",
     "bugs": "https://github.com/alphahunters/conference-app2/issues",
     "dependencies": {
-        "compression": "^1.7.4",
+        "compression": "^1.8.1",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "helmet": "^3.23.3",
